@@ -20,7 +20,7 @@ camera = cv2.VideoCapture(0 if not args.get("video", False) else args["video"])
 # Продолжаем цикл
 while True:
     # Захватываем текущий кадр
-    (grabbed, frame) = camera.read()
+    grabbed, frame = camera.read()
 
     # Если мы просматриваем видео и не удалось захватить кадр, значит, мы дошли до конца видео
     if args.get("video") and not grabbed:
@@ -65,10 +65,9 @@ while True:
 
     # Показываем кадр на экране
     cv2.imshow("Frame", frame)
-    key = cv2.waitKey(1) & 0xFF
 
     # Если нажата клавиша 'q', выходим из цикла
-    if key == ord("q"):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 # Освобождаем ресурсы камеры и закрываем все окна
