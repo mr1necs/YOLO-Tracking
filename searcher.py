@@ -88,10 +88,10 @@ def main():
 
         # Отрисовка траектории
         for i in range(1, len(pts)):
-            if pts[i - 1] is None or pts[i] is None:
-                continue
-            thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
-            cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+            # Если обе точки определены, вычисляем толщину линии и рисуем соединяющую линию
+            if pts[i - 1] is not None and pts[i] is not None:
+                thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
+                cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)        
 
         # Отображение кадра
         cv2.imshow("YOLOv5 Ball Detection and Tracking", frame)
