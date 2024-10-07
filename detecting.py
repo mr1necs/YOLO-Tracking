@@ -44,14 +44,15 @@ while True:
         # Обработка результатов
         results.render()
 
-        # Отображение кадра
-        cv2.imshow('Ball Detection', frame)
+        # Показываем кадр на экране
+        cv2.imshow('Ball Detecting', frame)
         
     except Exception as e:
         print('Ошибка при обработке кадра:', e)
 
+    # Если нажата клавиша 'q', выходим из цикла
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-cap.release()
+grabbed.release()
 cv2.destroyAllWindows()

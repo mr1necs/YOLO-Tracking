@@ -64,7 +64,7 @@ while True:
             cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
     # Показываем кадр на экране
-    cv2.imshow("Frame", frame)
+    cv2.imshow("Ball Tracking", frame)
 
     # Если нажата клавиша 'q', выходим из цикла
     if cv2.waitKey(1) & 0xFF == ord('q'):
