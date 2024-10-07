@@ -1,11 +1,11 @@
+from argparse import ArgumentParser
 from collections import deque
 import numpy as np
-import argparse
 import imutils
 import cv2
 
 # Создаем парсер аргументов и разбираем аргументы
-ap = argparse.ArgumentParser()
+ap = ArgumentParser()
 ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
 ap.add_argument("-b", "--buffer", type=int, default=32, help="максимальный размер буфера")
 args = vars(ap.parse_args())
