@@ -1,6 +1,6 @@
-import torch
+from argparse import ArgumentParser
+from torch import hub
 import cv2
-import argparse
 import os
 
 # Путь к локально клонированному репозиторию YOLOv5
@@ -16,14 +16,14 @@ if not os.path.isfile(weight_path):
 
 # Загрузка модели YOLOv5 из локального репозитория    
 try:
-    model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
+    model = hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
     
 except Exception as e:
     print('Ошибка при загрузке модели:', e)
     exit()
 
 # Создаем парсер аргументов и разбираем аргументы
-ap = argparse.ArgumentParser()
+ap = ArgumentParser()
 ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
 args = vars(ap.parse_args())
 
