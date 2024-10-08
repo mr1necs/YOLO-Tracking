@@ -4,6 +4,7 @@ import cv2
 import os
 from collections import deque
 import numpy as np
+import imutils
 
 
 # Настройка аргументов командной строки
@@ -23,9 +24,11 @@ def get_model(yolov5_repo, weight_path, device):
     try:
         # После загрузки модели
         model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
-        device = 'mps' if device == 'mps' and torch.backends.mps.is_available() else 'cpu'
-        model.to(device)  # Перенос модели на GPU
+        
+        # Перенос модели на GPU
+        model.to('mps' if device == 'mps' and torch.backends.mps.is_available() else 'cpu')  
         print(f'Model use {device}')
+        
     except Exception as e:
         print('Ошибка при загрузке модели YOLOv5:', e)
         exit()
@@ -44,7 +47,7 @@ def main():
         exit()
 
     # Загрузка модели YOLOv5 из локального репозитория
-    model = get_model(args["repo"], args["weights"])
+    model = get_model(args["repo"], args["weights"], args["model"])
     
     # Настройка для отслеживания траектории
     pts = deque(maxlen=args["buffer"])
@@ -65,7 +68,10 @@ def main():
         # Если видео и кадр не захвачен, выйти из цикла
         if video_path and not grabbed:
             break
-
+        
+        # Изменяем размер кадра
+        frame = imutils.resize(frame, width=800)
+        
         # Выполнение предсказания с помощью YOLOv5
         try:
             results = model(frame)
