@@ -12,7 +12,7 @@ def get_arguments():
     ap = ArgumentParser()
     ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
     ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
-    ap.add_argument("-w", "--weights", type=str, default='yolov5s.pt', help="путь к файлу весов YOLOv5")
+    ap.add_argument("-w", "--weights", type=str, default='yolov5n.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
     ap.add_argument("-c", "--class-name", type=str, default='sports ball', help="название класса для отслеживания")
     ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")

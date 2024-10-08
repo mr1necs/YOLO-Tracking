@@ -7,7 +7,7 @@ import os
 yolov5_repo = 'yolov5'
 
 # Путь к файлу весов модели
-weight_path = 'yolov5s.pt'
+weight_path = 'yolov5n.pt'
 
 # Проверка наличия файла весов
 if not os.path.isfile(weight_path):
