@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from torch import hub
+import torch
 import cv2
 import os
 from collections import deque
@@ -9,7 +9,7 @@ def main():
     # Настройка аргументов командной строки
     ap = ArgumentParser()
     ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
-    ap.add_argument("-b", "--buffer", type=int, default=32, help="максимальный размер буфера для траектории")
+    ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
     ap.add_argument("-w", "--weights", type=str, default='yolov5s.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
     ap.add_argument("-c", "--class-name", type=str, default='sports ball', help="название класса для отслеживания")
@@ -24,7 +24,11 @@ def main():
     # Загрузка модели YOLOv5 из локального репозитория
     yolov5_repo = args["repo"]
     try:
-        model = hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
+        # После загрузки модели
+        model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
+        device = 'mps' if torch.backends.mps.is_available() else 'cpu'
+        model.to(device)  # Перенос модели на GPU
+        print(f'CNN training on {device}')
     except Exception as e:
         print('Ошибка при загрузке модели YOLOv5:', e)
         exit()
