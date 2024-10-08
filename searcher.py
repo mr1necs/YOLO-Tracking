@@ -78,7 +78,7 @@ def main():
                 class_name = model.names[int(cls)]
                 
                 # Проверка, соответствует ли класс целевому объекту
-                if class_name.lower() == args["class_name"].lower() and conf >= 0.5:
+                if class_name.lower() == args["class_name"].lower() and conf >= 0.4:
                     # Вычисление центра объекта
                     center_x = int((x1 + x2) / 2)
                     center_y = int((y1 + y2) / 2)
