@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from torch import hub
+from torch import hub, backends
 import cv2
 import os
 
@@ -17,6 +17,8 @@ if not os.path.isfile(weight_path):
 # Загрузка модели YOLOv5 из локального репозитория    
 try:
     model = hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
+    device = 'mps' if backends.mps.is_available() else 'cpu'
+    model.to(device)  # Перенос модели на GPU
     
 except Exception as e:
     print('Ошибка при загрузке модели:', e)

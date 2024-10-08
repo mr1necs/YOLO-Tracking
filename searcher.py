@@ -14,17 +14,18 @@ def get_arguments():
     ap.add_argument("-w", "--weights", type=str, default='yolov5s.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
     ap.add_argument("-c", "--class-name", type=str, default='sports ball', help="название класса для отслеживания")
+    ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")
     return vars(ap.parse_args())
 
 
 # Загрузка модели YOLOv5 из локального репозитория
-def get_model(yolov5_repo, weight_path):
+def get_model(yolov5_repo, weight_path, device):
     try:
         # После загрузки модели
         model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
-        device = 'mps' if torch.backends.mps.is_available() else 'cpu'
+        device = 'mps' if device == 'mps' and torch.backends.mps.is_available() else 'cpu'
         model.to(device)  # Перенос модели на GPU
-        print(f'CNN training on {device}')
+        print(f'Model use {device}')
     except Exception as e:
         print('Ошибка при загрузке модели YOLOv5:', e)
         exit()
@@ -78,17 +79,18 @@ def main():
                 class_name = model.names[int(cls)]
                 
                 # Проверка, соответствует ли класс целевому объекту
-                if class_name.lower() == args["class_name"].lower() and conf >= 0.4:
+                if (class_name.lower() == args["class_name"].lower() or args["class_name"].lower() == 'frisbee') and conf >= 0.5:
                     # Вычисление центра объекта
                     center_x = int((x1 + x2) / 2)
                     center_y = int((y1 + y2) / 2)
                     center = (center_x, center_y)
+                    radius = int(abs((y1 - y2) / 2))
 
                     # Добавление точки в очередь
                     pts.appendleft(center)
 
                     # Рисование прямоугольника вокруг объекта
-                    cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
+                    cv2.circle(frame, center, radius, (0, 255, 255), 2)
                     cv2.putText(frame, f'{class_name} {conf:.2f}', (int(x1), int(y1) - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                     
