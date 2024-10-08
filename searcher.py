@@ -5,24 +5,20 @@ import os
 from collections import deque
 import numpy as np
 
-def main():
-    # Настройка аргументов командной строки
+
+# Настройка аргументов командной строки
+def get_arguments():
     ap = ArgumentParser()
     ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
     ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
     ap.add_argument("-w", "--weights", type=str, default='yolov5s.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
     ap.add_argument("-c", "--class-name", type=str, default='sports ball', help="название класса для отслеживания")
-    args = vars(ap.parse_args())
+    return vars(ap.parse_args())
 
-    # Проверка наличия файла весов
-    weight_path = args["weights"]
-    if not os.path.isfile(weight_path):
-        print(f'Файл весов не найден по пути: {weight_path}')
-        exit()
 
-    # Загрузка модели YOLOv5 из локального репозитория
-    yolov5_repo = args["repo"]
+# Загрузка модели YOLOv5 из локального репозитория
+def get_model(yolov5_repo, weight_path):
     try:
         # После загрузки модели
         model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
@@ -32,7 +28,23 @@ def main():
     except Exception as e:
         print('Ошибка при загрузке модели YOLOv5:', e)
         exit()
+    
+    return model
 
+
+def main():
+    # Настройка аргументов командной строки
+    args = get_arguments()
+
+    # Проверка наличия файла весов
+    weight_path = args["weights"]
+    if not os.path.isfile(weight_path):
+        print(f'Файл весов не найден по пути: {weight_path}')
+        exit()
+
+    # Загрузка модели YOLOv5 из локального репозитория
+    model = get_model(args["repo"], args["weights"])
+    
     # Настройка для отслеживания траектории
     pts = deque(maxlen=args["buffer"])
 
