@@ -17,8 +17,6 @@ def get_arguments():
     ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")
     return vars(ap.parse_args())
 
-classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
-
 # Загрузка модели YOLOv5 из локального репозитория
 def get_model(yolov5_repo, weight_path, device):
     try:
@@ -39,6 +37,9 @@ def get_model(yolov5_repo, weight_path, device):
 def main():
     # Настройка аргументов командной строки
     args = get_arguments()
+    
+    # Настройка библиотеки удовлетворяющийх классов
+    classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
 
     # Проверка наличия файла весов
     weight_path = args["weights"]
