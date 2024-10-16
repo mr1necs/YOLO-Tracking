@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from matplotlib.font_manager import weight_dict
 import torch
 import cv2
 import os
@@ -17,8 +18,18 @@ def get_arguments():
     ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")
     return vars(ap.parse_args())
 
+
 # Загрузка модели YOLOv5 из локального репозитория
-def get_model(yolov5_repo, weight_path, device):
+def get_model(args):
+    yolov5_repo = args["repo"]
+    weight_path = args["weights"]
+    device = args["model"]
+    
+    # Проверка наличия файла весов
+    if not os.path.isfile(weight_path):
+        print(f'Файл весов не найден по пути: {weight_path}')
+        exit()
+        
     try:
         # После загрузки модели
         model = torch.hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
@@ -34,25 +45,7 @@ def get_model(yolov5_repo, weight_path, device):
     return model
 
 
-def main():
-    # Настройка аргументов командной строки
-    args = get_arguments()
-    
-    # Настройка библиотеки удовлетворяющийх классов
-    classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
-
-    # Проверка наличия файла весов
-    weight_path = args["weights"]
-    if not os.path.isfile(weight_path):
-        print(f'Файл весов не найден по пути: {weight_path}')
-        exit()
-
-    # Загрузка модели YOLOv5 из локального репозитория
-    model = get_model(args["repo"], args["weights"], args["model"])
-    
-    # Настройка для отслеживания траектории
-    pts = deque(maxlen=args["buffer"])
-
+def get_video(args):
     # Захват видео
     video_path = args.get("video", False)
     camera = cv2.VideoCapture(0 if not video_path else video_path)
@@ -61,6 +54,25 @@ def main():
     if not camera.isOpened():
         print("Ошибка при открытии видеопотока.")
         exit()
+    
+    return video_path, camera
+
+
+
+def main():
+    # Настройка аргументов командной строки
+    args = get_arguments()
+    
+    # Настройка библиотеки удовлетворяющийх классов
+    classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
+
+    # Загрузка модели YOLOv5 из локального репозитория
+    model = get_model(args)
+    
+    # Настройка для отслеживания траектории
+    pts = deque(maxlen=args["buffer"])
+
+    video_path, camera = get_video(args)
 
     while True:
         # Захват текущего кадра
@@ -128,6 +140,7 @@ def main():
     # Освобождение ресурсов
     camera.release()
     cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     main()
