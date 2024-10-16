@@ -14,10 +14,10 @@ def get_arguments():
     ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
     ap.add_argument("-w", "--weights", type=str, default='yolov5n.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
-    ap.add_argument("-c", "--class-name", type=str, default='sports ball', help="название класса для отслеживания")
     ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")
     return vars(ap.parse_args())
 
+classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
 
 # Загрузка модели YOLOv5 из локального репозитория
 def get_model(yolov5_repo, weight_path, device):
@@ -85,7 +85,7 @@ def main():
                 class_name = model.names[int(cls)]
                 
                 # Проверка, соответствует ли класс целевому объекту
-                if (class_name.lower() == args["class_name"].lower() or args["class_name"].lower() == 'frisbee') and conf >= 0.5:
+                if (class_name.lower() in classes) and conf >= 0.5:
                     # Вычисление центра объекта
                     center_x = int((x1 + x2) / 2)
                     center_y = int((y1 + y2) / 2)

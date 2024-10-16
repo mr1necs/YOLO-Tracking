@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from collections import deque
+from turtle import width
 import numpy as np
 import imutils
 import cv2
