@@ -13,9 +13,9 @@ def get_arguments():
     ap = ArgumentParser()
     ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
     ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
-    ap.add_argument("-w", "--weights", type=str, default='yolov5n.pt', help="путь к файлу весов YOLOv5")
+    ap.add_argument("-w", "--weights", type=str, default='yolov5s.pt', help="путь к файлу весов YOLOv5")
     ap.add_argument("-r", "--repo", type=str, default='yolov5', help="путь к локально клонированному репозиторию YOLOv5")
-    ap.add_argument("-m", "--model", type=str, default='cpu', help="тип обработки cpu или gpu")
+    ap.add_argument("-m", "--model", type=str, default='gpu', help="тип обработки cpu или gpu")
     return vars(ap.parse_args())
 
 
@@ -58,7 +58,6 @@ def get_video(args):
     return video_path, camera
 
 
-
 def main():
     # Настройка аргументов командной строки
     args = get_arguments()
@@ -98,7 +97,7 @@ def main():
                 class_name = model.names[int(cls)]
                 
                 # Проверка, соответствует ли класс целевому объекту
-                if (class_name.lower() in classes) and conf >= 0.5:
+                if (class_name.lower() in classes) and conf >= 0.3:
                     # Вычисление центра объекта
                     center_x = int((x1 + x2) / 2)
                     center_y = int((y1 + y2) / 2)

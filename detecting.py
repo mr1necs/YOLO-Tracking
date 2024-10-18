@@ -7,7 +7,7 @@ import os
 yolov5_repo = 'yolov5'
 
 # Путь к файлу весов модели
-weight_path = 'yolov5n.pt'
+weight_path = 'yolov5s.pt'
 
 # Проверка наличия файла весов
 if not os.path.isfile(weight_path):
@@ -17,8 +17,8 @@ if not os.path.isfile(weight_path):
 # Загрузка модели YOLOv5 из локального репозитория    
 try:
     model = hub.load(yolov5_repo, 'custom', path=weight_path, source='local')
-    # device = 'mps' if backends.mps.is_available() else 'cpu'
-    device = 'cpu'
+    device = 'mps' if backends.mps.is_available() else 'cpu'
+    # device = 'cpu'
     model.to(device)  # Перенос модели на GPU
     
 except Exception as e:
