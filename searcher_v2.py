@@ -11,7 +11,7 @@ import imutils
 # Настройка аргументов командной строки
 def get_arguments():
     ap = ArgumentParser()
-    ap.add_argument("-m", "--model", type=str, default='mps', help="тип обработки cpu или mps")
+    ap.add_argument("-m", "--model", type=str, default='mps', help="устройство: 'mps', 'cuda' или 'cpu'")
     ap.add_argument("-v", "--video", help="путь к (необязательному) видеофайлу")
     ap.add_argument("-b", "--buffer", type=int, default=64, help="максимальный размер буфера для траектории")
     return vars(ap.parse_args())
@@ -26,7 +26,6 @@ def get_model(device):
         'cpu'
     )
     model.to(device)
-    print(f'Model use {device}')
 
     return model
 
@@ -47,6 +46,8 @@ def process_detections(model, classes, pts, frame):
 
     for r in results:
         detections = r.boxes
+        if r.boxes is None:
+            continue  # Пропускаем, если нет обнаружений
 
         for det in detections:
             xyxy = det.xyxy[0].cpu().numpy()
@@ -63,6 +64,8 @@ def process_detections(model, classes, pts, frame):
 
                 pts.appendleft(center)
                 cv2.circle(frame, center, radius, (0, 255, 255), 2)
+                cv2.putText(frame, f'{class_name} {conf:.2f}', (int(x1), int(y1) - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
                 break
         else:
             pts.appendleft(None)
@@ -84,7 +87,7 @@ def main():
     camera = get_video(args["video"])
     pts = deque(maxlen=args["buffer"])  # Буфер для отслеживания траектории
 
-    classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}  # Нужные классы
+    classes = {'frisbee', 'sports ball', 'apple', 'orange', 'cake', 'clock'}
 
     while True:
         grabbed, frame = camera.read()
