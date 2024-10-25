@@ -63,9 +63,7 @@ def process_detections(model, classes, pts, frame):
                 radius = int(abs((y1 - y2) / 2))
 
                 pts.appendleft(center)
-                cv2.circle(frame, center, radius, (0, 255, 255), 2)
-                cv2.putText(frame, f'{class_name} {conf:.2f}', (int(x1), int(y1) - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                cv2.circle(frame, center, radius, (0, 0, 255), 2)
                 break
         else:
             pts.appendleft(None)
@@ -94,7 +92,7 @@ def main():
         if not grabbed:
             break
 
-        frame = imutils.resize(frame, width=800)
+        frame = imutils.resize(frame, width=1080)
 
         process_detections(model, classes, pts, frame)
         draw_trace(frame, pts)
