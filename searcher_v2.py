@@ -92,7 +92,7 @@ def main():
         if not grabbed:
             break
 
-        frame = imutils.resize(frame, width=1080)
+        frame = imutils.resize(frame, width=800)
 
         process_detections(model, classes, pts, frame)
         draw_trace(frame, pts)
