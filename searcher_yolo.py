@@ -19,15 +19,20 @@ def get_arguments():
 
 # Загрузка модели
 def get_model(device):
-    model = YOLO('yolo11n.pt')
+    model = YOLO("yolo11n.pt")
+
+    model.export(format="ncnn")  # creates 'yolo11n_ncnn_model'
+
+    ncnn_model = YOLO("yolo11n_ncnn_model")
+
     device = (
         'mps' if device == 'mps' and mps.is_available() else
         'cuda' if device == 'cuda' and cuda.is_available() else
         'cpu'
     )
-    model.to(device)
+    ncnn_model.to(device)
 
-    return model
+    return ncnn_model
 
 
 # Захват видео
